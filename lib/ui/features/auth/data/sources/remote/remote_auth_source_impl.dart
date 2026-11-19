@@ -26,16 +26,20 @@ class RemoteAuthSourceImpl implements AuthRemoteSource {
   }) async {
     final cleanId = identifier.trim().toLowerCase();
 
-    final urls = [
-      'http://localhost:3000/api/mobile/auth/login',
-      'http://127.0.0.1:3000/api/mobile/auth/login',
-      'http://10.246.64.152:3000/api/mobile/auth/login',
-      'http://192.168.1.14:3000/api/mobile/auth/login',
-      'http://192.168.1.42:3000/api/mobile/auth/login',
-      'http://10.0.2.2:3000/api/mobile/auth/login',
-      '${ApiConstants.baseUrl}/auth/login',
-      'https://ssrealty.org/api/mobile/auth/login',
-    ];
+    final urls = kIsWeb
+        ? [
+            'https://ssrealty.org/api/mobile/auth/login',
+          ]
+        : [
+            'http://localhost:3000/api/mobile/auth/login',
+            'http://127.0.0.1:3000/api/mobile/auth/login',
+            'http://10.246.64.152:3000/api/mobile/auth/login',
+            'http://192.168.1.14:3000/api/mobile/auth/login',
+            'http://192.168.1.42:3000/api/mobile/auth/login',
+            'http://10.0.2.2:3000/api/mobile/auth/login',
+            '${ApiConstants.baseUrl}/auth/login',
+            'https://ssrealty.org/api/mobile/auth/login',
+          ];
 
     double? latitude;
     double? longitude;
@@ -148,6 +152,60 @@ class RemoteAuthSourceImpl implements AuthRemoteSource {
       });
     }
 
+    if (cleanId.contains('nihal') || cleanId == 'ssr005') {
+      const agentUser = User(
+        id: 'agent_nihal',
+        fullName: 'Nihal Singh',
+        phone: '9876543210',
+        orgId: 'ss_realty_org',
+        role: UserRole.agent,
+        email: 'nihalsin09@gmail.com',
+        employeeId: 'SSR005',
+        isActive: true,
+      );
+      return Result.success({
+        'accessToken': 'dev_token_nihal',
+        'refreshToken': 'dev_refresh_nihal',
+        'user': agentUser,
+      });
+    }
+
+    if (cleanId.contains('nikhil') || cleanId == 'ssr001') {
+      const agentUser = User(
+        id: 'agent_nikhil',
+        fullName: 'Nikhil Srivastava',
+        phone: '9876543210',
+        orgId: 'ss_realty_org',
+        role: UserRole.agent,
+        email: 'nikhil333srivastava@gmail.com',
+        employeeId: 'SSR001',
+        isActive: true,
+      );
+      return Result.success({
+        'accessToken': 'dev_token_nikhil',
+        'refreshToken': 'dev_refresh_nikhil',
+        'user': agentUser,
+      });
+    }
+
+    if (cleanId.contains('ayaan') || cleanId == 'ssr002') {
+      const agentUser = User(
+        id: 'agent_ayaan',
+        fullName: 'Ayaan',
+        phone: '9876543210',
+        orgId: 'ss_realty_org',
+        role: UserRole.agent,
+        email: 'ayaanss4792@gmail.com',
+        employeeId: 'SSR002',
+        isActive: true,
+      );
+      return Result.success({
+        'accessToken': 'dev_token_ayaan',
+        'refreshToken': 'dev_refresh_ayaan',
+        'user': agentUser,
+      });
+    }
+
     // Telecaller fallback logins for Web development
     if (cleanId.contains('gulshan') || cleanId == 'ssr004') {
       const agentUser = User(
@@ -156,8 +214,9 @@ class RemoteAuthSourceImpl implements AuthRemoteSource {
         phone: '9876543210',
         orgId: 'ss_realty_org',
         role: UserRole.agent,
-        email: 'gulshan@ssrealty.org',
+        email: 'gulshanverma3374@gmail.com',
         employeeId: 'SSR004',
+        isActive: true,
       );
       return Result.success({
         'accessToken': 'dev_token_gulshan',
