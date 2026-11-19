@@ -1,0 +1,110 @@
+name: sales_crm_dialer
+description: "Production Sales CRM Dialer for Real Estate Teams"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State Management & DI ──────────────────────────
+  get_it: ^7.6.7
+  injectable: ^2.3.2
+  provider: ^6.1.2
+
+  # ── Navigation ─────────────────────────────────────
+  go_router: ^14.2.0
+
+  # ── Networking ─────────────────────────────────────
+  dio: ^5.4.3
+  retrofit: ^4.1.0
+  pretty_dio_logger: ^1.4.0
+
+  # ── Local Storage ──────────────────────────────────
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.0
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.3
+
+  # ── Serialization ──────────────────────────────────
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # ── UI Components ──────────────────────────────────
+  google_fonts: ^6.2.1
+  cached_network_image: ^3.3.1
+  fl_chart: ^0.68.0
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  flutter_svg: ^2.0.10+1
+  gap: ^3.0.1
+  badges: ^3.1.2
+  characters: ^1.3.0
+
+  # ── Maps ───────────────────────────────────────────
+  google_maps_flutter: ^2.7.0
+  geolocator: ^12.0.0
+
+  # ── Media ──────────────────────────────────────────
+  image_picker: ^1.1.2
+  just_audio: ^0.9.39
+  audio_session: ^0.1.25
+  screenshot: ^2.3.0
+  path_provider: ^2.1.3
+  path: ^1.9.0
+  image: ^4.2.0
+
+
+
+  # ── Sharing ────────────────────────────────────────
+  share_plus: ^10.1.0
+  url_launcher: ^6.3.0
+
+  # ── Connectivity ───────────────────────────────────
+  connectivity_plus: ^6.0.3
+
+  # ── Permissions ────────────────────────────────────────
+  permission_handler: ^11.3.1
+  flutter_contacts: ^2.0.0
+
+  # ── Real-time ──────────────────────────────────────
+  socket_io_client: ^2.0.3+1
+
+  # ── Utils ──────────────────────────────────────────
+  intl: ^0.19.0
+  equatable: ^2.0.5
+  dartz: ^0.10.1
+  logger: ^2.4.0
+  package_info_plus: ^8.1.0
+  device_info_plus: ^10.1.2
+  uuid: ^4.4.2
+  timeago: ^3.7.0
+  flutter_animate: ^4.5.0
+  flutter_local_notifications: ^22.3.0
+  timezone: ^0.11.1
+  crypto: ^3.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.12
+  freezed: ^3.2.5
+  json_serializable: ^6.8.0
+  injectable_generator: ^2.4.2
+  drift_dev: ^2.18.0
+  retrofit_generator: ^10.2.8
+  mocktail: ^1.0.4
+  very_good_analysis: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/audio/alarm_sound.wav
+    - assets/images/
+
+
