@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/error/result.dart';
 import '../../../../domain/entities/lead.dart';
+import '../../../../data/repositories/remote_lead_repository.dart';
 
 class LeadFilter {
   const LeadFilter({
@@ -100,6 +101,9 @@ class LeadListViewModel extends ChangeNotifier {
     if (refresh) {
       _currentPage = 1;
       _hasMore = true;
+      try {
+        await RemoteLeadRepository.fetchFromApi();
+      } catch (_) {}
     }
     debugPrint('loadLeads: _hasMore=$_hasMore, _state.isLoading=${_state.isLoading}');
     if (!_hasMore || _state.isLoading) return;

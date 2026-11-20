@@ -117,27 +117,50 @@ class RemoteLeadRepository implements LeadRepository {
     await fetchFromApi();
   }
 
+  /// Purge cached leads on logout or agent switch
+  static Future<void> clearCache() async {
+    _cachedLeads = [];
+    _activities.clear();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('cached_remote_leads');
+      await prefs.remove('cached_lead_activities');
+    } catch (_) {}
+  }
+
   /// Sync all leads and activities from the Next.js API
-  static Future<void> fetchFromApi() async {
+  static Future<bool> fetchFromApi() async {
     try {
       final token = await LocalAuthSourceImpl().getAccessToken();
+      final user = await LocalAuthSourceImpl().getCurrentUser();
+      final empId = user?.employeeId;
+      final agentId = user?.id;
+
       final options = Options(
-        sendTimeout: const Duration(seconds: 5),
-        receiveTimeout: const Duration(seconds: 8),
+        sendTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 15),
         headers: {
           if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
+          if (empId != null && empId.isNotEmpty) 'x-employee-id': empId,
+          if (agentId != null && agentId.isNotEmpty) 'x-agent-id': agentId,
         },
       );
 
+      final queryParams = <String, dynamic>{
+        if (empId != null && empId.isNotEmpty) 'employeeId': empId,
+        if (agentId != null && agentId.isNotEmpty) 'agentId': agentId,
+      };
+
       final endpoints = [
+        'https://www.ssrealty.org/api/mobile/leads',
         'https://ssrealty.org/api/mobile/leads',
-        if (ApiConstants.baseUrl != 'https://ssrealty.org/api/mobile')
+        if (ApiConstants.baseUrl != 'https://www.ssrealty.org/api/mobile' && ApiConstants.baseUrl != 'https://ssrealty.org/api/mobile')
           '${ApiConstants.baseUrl}/leads',
       ];
 
       for (final endpoint in endpoints) {
         try {
-          final response = await _dio.get(endpoint, options: options);
+          final response = await _dio.get(endpoint, options: options, queryParameters: queryParams);
           if (response.statusCode == 200 && response.data != null) {
             final dynamic rawData = response.data;
             List<dynamic> leadsList = [];
@@ -145,6 +168,8 @@ class RemoteLeadRepository implements LeadRepository {
               leadsList = rawData;
             } else if (rawData is Map && rawData['leads'] is List) {
               leadsList = rawData['leads'];
+            } else if (rawData is Map && rawData['data'] is List) {
+              leadsList = rawData['data'];
             } else if (rawData is Map && rawData['items'] is List) {
               leadsList = rawData['items'];
             }
@@ -152,33 +177,11 @@ class RemoteLeadRepository implements LeadRepository {
             if (leadsList.isNotEmpty) {
               final remoteLeads = leadsList.map((json) => Lead.fromJson(json as Map<String, dynamic>)).toList();
               
-              // Merge with local cached leads preserving local status updates
-              final Map<String, Lead> mergedMap = {};
-              for (final cLead in _cachedLeads) {
-                mergedMap[cLead.id] = cLead;
-              }
-              for (final rLead in remoteLeads) {
-                if (!mergedMap.containsKey(rLead.id)) {
-                  mergedMap[rLead.id] = rLead;
-                } else {
-                  final existing = mergedMap[rLead.id]!;
-                  // If locally updated, preserve local status
-                  if (existing.status != LeadStatus.newLead) {
-                    mergedMap[rLead.id] = rLead.copyWith(
-                      status: existing.status,
-                      lastActivityAt: existing.lastActivityAt ?? rLead.lastActivityAt,
-                      unitType: existing.unitType ?? rLead.unitType,
-                      projectName: existing.projectName ?? rLead.projectName,
-                    );
-                  } else {
-                    mergedMap[rLead.id] = rLead;
-                  }
-                }
-              }
-              _cachedLeads = mergedMap.values.toList();
+              // Always use the latest assigned leads for the active agent
+              _cachedLeads = remoteLeads;
               await _saveToCache();
               debugPrint('✅ Loaded ${_cachedLeads.length} leads from API: $endpoint');
-              break;
+              return true;
             }
           }
         } catch (e) {
@@ -188,6 +191,7 @@ class RemoteLeadRepository implements LeadRepository {
     } catch (e) {
       debugPrint('Error syncing leads from API: $e');
     }
+    return false;
   }
 
   static Future<void> _saveToCache() async {
@@ -360,6 +364,9 @@ class RemoteLeadRepository implements LeadRepository {
     required LeadFilter filter,
   }) async {
     try {
+      if (_cachedLeads.isEmpty) {
+        await fetchFromApi();
+      }
       var filtered = List<Lead>.from(_cachedLeads);
 
       if (isNewLeadsOnly) {
@@ -645,9 +652,10 @@ class RemoteLeadRepository implements LeadRepository {
     } catch (_) {}
 
     final urls = [
+      'https://www.ssrealty.org/api/mobile/leads/disposition',
+      'https://ssrealty.org/api/mobile/leads/disposition',
       '${ApiConstants.fallbackLocalUrl}/leads/disposition',
       '${ApiConstants.baseUrl}/leads/disposition',
-      'https://ssrealty.org/api/mobile/leads/disposition',
     ];
 
     final body = {

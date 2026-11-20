@@ -1,12 +1,12 @@
 abstract class ApiConstants {
   static const baseUrl = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'https://ssrealty.org/api/mobile',
+    defaultValue: 'https://www.ssrealty.org/api/mobile',
   );
-  static const fallbackLocalUrl = 'https://ssrealty.org/api/mobile';
+  static const fallbackLocalUrl = 'https://www.ssrealty.org/api/mobile';
   static const socketUrl = String.fromEnvironment(
     'SOCKET_URL',
-    defaultValue: 'https://ssrealty.org',
+    defaultValue: 'https://www.ssrealty.org',
   );
   static const connectTimeout = Duration(seconds: 30);
   static const receiveTimeout = Duration(seconds: 30);

@@ -4,6 +4,7 @@ import '../../../../domain/entities/user.dart';
 import 'package:sales_crm_dialer/ui/features/auth/data/sources/remote/auth_remote_source.dart';
 import 'package:sales_crm_dialer/ui/features/auth/data/sources/local/auth_local_source.dart';
 import '../../../../core/services/location_tracking_service.dart';
+import '../../../../data/repositories/remote_lead_repository.dart';
 
 enum AuthState { initial, loading, authenticated, unauthenticated, error }
 
@@ -74,6 +75,13 @@ class AuthViewModel extends ChangeNotifier {
           user: data['user'] as User,
         );
         _currentUser = data['user'] as User;
+
+        // Immediately fetch fresh leads for this agent
+        try {
+          await RemoteLeadRepository.clearCache();
+          await RemoteLeadRepository.fetchFromApi();
+        } catch (_) {}
+
         _setState(AuthState.authenticated);
         if (!_currentUser!.isExecutive) {
           LocationTrackingService.instance.startTracking();
@@ -90,6 +98,9 @@ class AuthViewModel extends ChangeNotifier {
     LocationTrackingService.instance.stopTracking();
     await _remote.logout();
     await _local.clearSession();
+    try {
+      await RemoteLeadRepository.clearCache();
+    } catch (_) {}
     _currentUser = null;
     _setState(AuthState.unauthenticated);
   }

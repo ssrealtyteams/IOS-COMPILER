@@ -28,17 +28,16 @@ class RemoteAuthSourceImpl implements AuthRemoteSource {
 
     final urls = kIsWeb
         ? [
+            'https://www.ssrealty.org/api/mobile/auth/login',
             'https://ssrealty.org/api/mobile/auth/login',
           ]
         : [
+            'https://www.ssrealty.org/api/mobile/auth/login',
+            'https://ssrealty.org/api/mobile/auth/login',
+            '${ApiConstants.baseUrl}/auth/login',
             'http://localhost:3000/api/mobile/auth/login',
             'http://127.0.0.1:3000/api/mobile/auth/login',
-            'http://10.246.64.152:3000/api/mobile/auth/login',
-            'http://192.168.1.14:3000/api/mobile/auth/login',
-            'http://192.168.1.42:3000/api/mobile/auth/login',
             'http://10.0.2.2:3000/api/mobile/auth/login',
-            '${ApiConstants.baseUrl}/auth/login',
-            'https://ssrealty.org/api/mobile/auth/login',
           ];
 
     double? latitude;

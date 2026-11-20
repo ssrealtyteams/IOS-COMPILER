@@ -72,7 +72,9 @@ class NewLeadSyncService {
 
         for (final newLead in brandNewLeads) {
           debugPrint('🔥 [NewLeadSyncService] Found newly assigned lead: ${newLead.fullName} (${newLead.phone})');
-          await NotificationService.showNewLeadNotification(newLead);
+          if (!kIsWeb) {
+            await NotificationService.showNewLeadNotification(newLead);
+          }
         }
       }
     } catch (e) {

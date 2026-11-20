@@ -9,7 +9,6 @@ import 'core/services/location_tracking_service.dart';
 import 'core/services/attendance_record_service.dart';
 
 import 'core/services/new_lead_sync_service.dart';
-import 'core/platform/call_channel.dart';
 import 'data/repositories/remote_lead_repository.dart';
 
 void main() async {
@@ -39,10 +38,10 @@ void main() async {
   WidgetsBinding.instance.addPostFrameCallback((_) async {
     await RemoteLeadRepository.init();
     await AttendanceRecordService.init();
+    await NewLeadSyncService.init();
     if (!kIsWeb) {
       await NotificationService.init();
       await PermissionService.requestAllPermissions();
-      await NewLeadSyncService.init();
       LocationTrackingService.instance.startTracking();
     }
   });

@@ -428,7 +428,14 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() => _selectedIndex = index),
+      onTap: () {
+        setState(() => _selectedIndex = index);
+        if (index == 1) {
+          _leadVm.loadLeads(refresh: true);
+        } else if (index == 2) {
+          _newLeadVm.loadLeads(refresh: true);
+        }
+      },
       child: Container(
         width: 70,
         child: Column(
