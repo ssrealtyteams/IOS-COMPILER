@@ -1,11 +1,11 @@
 {
-    "name": "sales_crm_dialer",
-    "short_name": "sales_crm_dialer",
+    "name": "Sales CRM Dialer",
+    "short_name": "Sales CRM",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Sales CRM Dialer for Real Estate Teams",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
